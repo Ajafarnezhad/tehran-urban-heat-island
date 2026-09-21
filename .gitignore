@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+outputs/data/*.geojson
+outputs/data/*.csv
+outputs/figures/*.png
+outputs/maps/*.html
+.env
+*.egg-info/
+.venv/
+venv/

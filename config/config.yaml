@@ -1,0 +1,39 @@
+# پیکربندی پروژه تحلیل جزیره حرارتی شهری (UHI) تهران
+
+project:
+  name: "Tehran Urban Heat Island Analysis"
+  ee_project_id: "your-gcp-project-id"   # آی‌دی پروژه Google Cloud متصل به Earth Engine خودتان را اینجا بگذارید
+
+aoi:
+  name: "Tehran"
+  # باکس محدودکننده تقریبی کلان‌شهر تهران (می‌توانید با شیپ‌فایل مرزهای شهرداری جایگزین کنید)
+  bbox: [51.05, 35.55, 51.60, 35.85]   # [minLon, minLat, maxLon, maxLat]
+
+time_periods:
+  baseline:
+    label: "2015"
+    start: "2015-06-01"
+    end: "2015-09-15"
+  recent:
+    label: "2024"
+    start: "2024-06-01"
+    end: "2024-09-15"
+
+landsat:
+  baseline_collection: "LANDSAT/LC08/C02/T1_L2"   # Landsat 8 برای دوره پایه
+  recent_collection: "LANDSAT/LC09/C02/T1_L2"     # Landsat 9 برای دوره اخیر
+  cloud_cover_max: 20
+
+lulc:
+  collection: "ESA/WorldCover/v200"
+  year: "2021"
+
+analysis:
+  grid_cell_size_m: 500          # اندازه سلول شبکه برای آمار ناحیه‌ای و هات‌اسپات
+  hotspot_confidence_levels: [90, 95, 99]
+  ndvi_ndbi_sample_points: 2000
+
+export:
+  drive_folder: "UHI_Tehran_Exports"
+  scale_m: 30
+  crs: "EPSG:32639"   # UTM Zone 39N (پوشش‌دهنده تهران)
