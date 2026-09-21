@@ -1,121 +1,126 @@
-# 🛰️ تحلیل جزیره حرارتی شهری تهران با سنجش از دور (Tehran Urban Heat Island Analysis)
+# 🛰️ Tehran Urban Heat Island Analysis (Remote Sensing)
 
-پروژه‌ای کامل و بازتولیدپذیر برای استخراج دمای سطح زمین (LST) از تصاویر ماهواره‌ای Landsat، ارزیابی رابطه آن با پوشش گیاهی و ساخت‌وساز شهری، شناسایی کانون‌های داغ حرارتی، و مقایسه روند گرمایش شهری تهران بین سال‌های ۲۰۱۵ و ۲۰۲۴.
+A complete, reproducible pipeline for retrieving Land Surface Temperature (LST) from Landsat satellite imagery, evaluating its relationship with vegetation and built-up surfaces, identifying statistically significant heat clusters, and comparing Tehran's urban warming pattern between 2015 and 2024.
 
-بر پایه **Google Earth Engine (Python API)**، **geemap**، و کتابخانه‌های استاندارد علم داده مکانی (`geopandas`, `esda`, `libpysal`).
+Built on **Google Earth Engine (Python API)**, **geemap**, and standard spatial data science libraries (`geopandas`, `esda`, `libpysal`) — with a second, no-account-required execution path against real satellite imagery.
 
 ---
 
-## چرا این پروژه؟
+## Why this project
 
-جزیره حرارتی شهری (Urban Heat Island) یکی از ملموس‌ترین پیامدهای رشد بی‌رویه شهری و کاهش فضای سبز است. این پروژه نشان می‌دهد چگونه می‌توان **بدون هیچ داده میدانی**، صرفاً با تصاویر ماهواره‌ای رایگان، این پدیده را به‌صورت کمّی اندازه‌گیری، تحلیل فضایی و بصری‌سازی کرد — یک نمونه‌کار (portfolio) کامل از زنجیره سنجش از دور تا تحلیل مکانی و تصمیم‌سازی شهری.
+The urban heat island effect is one of the most tangible consequences of unchecked urban growth and vanishing green space. This project shows how, using nothing but free satellite imagery and no field data, that effect can be measured quantitatively, analyzed spatially, and visualized clearly — a complete demonstration of the remote sensing pipeline from raw imagery to spatial statistics and urban decision support.
 
-## ویژگی‌های کلیدی
+## Key features
 
-- ✅ استخراج LST با روش تابش‌سنجی تک‌کاناله + تصحیح گسیل‌مندی مبتنی بر NDVI
-- ✅ پایپ‌لاین کاملاً خودکار (CLI) قابل اجرا با یک دستور
-- ✅ مقایسه زمانی دو دوره (۲۰۱۵ در برابر ۲۰۲۴) برای برآورد نرخ گرمایش شهری
-- ✅ تحلیل همبستگی LST با NDVI/NDBI/NDWI
-- ✅ شناسایی کانون‌های داغ/سرد آماری با **Getis-Ord Gi\*** (تحلیل فضایی واقعی، نه فقط بصری)
-- ✅ محاسبه شدت عددی UHI (اختلاف دمای مناطق شهری و طبیعی)
-- ✅ نقشه تعاملی وب (Leaflet/geemap) و نمودارهای آماده گزارش
-- ✅ کد ماژولار، قابل تعمیم به هر شهر دیگر با تغییر یک فایل پیکربندی
+- ✅ LST retrieval via the mono-window method with NDVI-based emissivity correction
+- ✅ Fully automated CLI pipeline, runnable with a single command
+- ✅ Two independent execution paths: Google Earth Engine (any city/date range) or a no-account fallback using real, pre-selected Landsat scenes
+- ✅ Temporal comparison (2015 vs. 2024) to estimate the urban warming rate
+- ✅ Correlation analysis between LST and NDVI/NDBI/NDWI
+- ✅ Statistically significant hot/cold spot detection with **Getis-Ord Gi\*** (genuine spatial statistics, not just visual inspection)
+- ✅ Quantitative UHI intensity metric (temperature gap between built-up and natural areas)
+- ✅ Interactive web map (Leaflet/geemap) and report-ready charts
+- ✅ Modular code, portable to any other city by editing a single configuration file
 
-## معماری پروژه
+## Project layout
 
 ```
 heat/
-├── config/config.yaml          # AOI، بازه‌های زمانی، پارامترهای تحلیل
+├── config/config.yaml           # AOI, time periods, analysis parameters
 ├── src/
-│   ├── gee_setup.py             # اتصال و احراز هویت Earth Engine
-│   ├── indices.py                # ماسک ابر، NDVI، NDBI، NDWI
-│   ├── lst.py                    # استخراج LST (گسیل‌مندی + تک‌کاناله)
-│   ├── lulc.py                   # پوشش اراضی ESA WorldCover
-│   ├── uhi_analysis.py           # نمونه‌برداری شبکه‌ای، همبستگی، Getis-Ord Gi*
-│   ├── visualization.py          # نقشه تعاملی و نمودارها
-│   └── export.py                 # صادرات GeoTIFF/CSV به Google Drive
-├── scripts/run_pipeline.py     # اجرای کامل پایپ‌لاین با یک دستور
-├── notebooks/01_UHI_Tehran_Analysis.ipynb   # روایت تحلیلی گام‌به‌گام
-├── docs/methodology.md          # روش‌شناسی علمی کامل + منابع
-└── outputs/                     # نقشه‌ها، نمودارها، جداول خروجی
+│   ├── gee_setup.py              # Earth Engine connection and authentication
+│   ├── indices.py                 # Cloud masking, NDVI, NDBI, NDWI
+│   ├── lst.py                     # LST retrieval (emissivity + mono-window)
+│   ├── lulc.py                    # ESA WorldCover land cover
+│   ├── uhi_analysis.py            # Grid sampling, correlation, Getis-Ord Gi*
+│   ├── visualization.py           # Interactive maps and charts
+│   └── export.py                  # GeoTIFF/CSV export to Google Drive
+├── scripts/
+│   ├── run_pipeline.py           # Path 1: full run on Earth Engine
+│   ├── fetch_real_scenes.py      # Path 2: download real scenes (no login)
+│   └── analyze_real_scenes.py    # Path 2: analyze that real data
+├── notebooks/01_UHI_Tehran_Analysis.ipynb   # Step-by-step analytical narrative
+├── docs/methodology.md           # Full scientific methodology + references
+├── docs/portfolio_page.html      # Standalone case-study page with real results
+└── outputs/                      # Maps, charts, and result tables
 ```
 
-## راه‌اندازی
+## Setup
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## اجرا — دو مسیر
+## Running it — two paths
 
-**مسیر ۱: Google Earth Engine (هر شهر، هر بازهٔ زمانی)**
+**Path 1: Google Earth Engine (any city, any time range)**
 
-یک پروژه Google Cloud با Earth Engine API فعال بسازید (رایگان برای مصارف غیرتجاری) و آی‌دی آن را در `config/config.yaml` (`project.ee_project_id`) قرار دهید. اولین اجرا مرورگر را برای ورود با حساب گوگل باز می‌کند.
+Create a Google Cloud project with the Earth Engine API enabled (free for non-commercial use) and put its ID in `config/config.yaml` (`project.ee_project_id`). The first run opens a browser window for Google sign-in.
 
 ```bash
 python scripts/run_pipeline.py
-# یا روایت تعاملی:
+# or, for the interactive narrative:
 jupyter lab notebooks/01_UHI_Tehran_Analysis.ipynb
 ```
 
-**مسیر ۲: بازتولید بدون هیچ حساب کاربری (داده‌های واقعی همین ریپو)**
+**Path 2: Reproduce without any account (real data bundled with this repo)**
 
-این مسیر مستقیماً دو صحنهٔ واقعی Landsat را از کاتالوگ عمومی [Microsoft Planetary Computer](https://planetarycomputer.microsoft.com/) دانلود و تحلیل می‌کند — بدون نیاز به احراز هویت گوگل:
+This path downloads two real Landsat scenes directly from the public [Microsoft Planetary Computer](https://planetarycomputer.microsoft.com/) catalog — no Google authentication needed:
 
 ```bash
-python scripts/fetch_real_scenes.py     # دانلود باندهای واقعی روی تهران
-python scripts/analyze_real_scenes.py   # اجرای همان الگوریتم LST/NDVI/Getis-Ord روی داده واقعی
+python scripts/fetch_real_scenes.py     # download real bands over Tehran
+python scripts/analyze_real_scenes.py   # run the same LST/NDVI/Getis-Ord algorithm on real data
 ```
 
-## نتایج واقعی (تولیدشده با مسیر ۲، صحنه‌های Landsat 8/9 روی تهران)
+## Real results (produced by Path 2, on real Landsat 8/9 scenes over Tehran)
 
-| صحنه | تاریخ | ابرناکی |
+| Scene | Date | Cloud cover |
 |---|---|---|
-| `LC08_L2SP_164035_20150805_02_T1` | ۲۰۱۵-۰۸-۰۵ | ۰.۹۳٪ |
-| `LC09_L2SP_164035_20240805_02_T1` | ۲۰۲۴-۰۸-۰۵ | ۰.۵۳٪ |
+| `LC08_L2SP_164035_20150805_02_T1` | 2015-08-05 | 0.93% |
+| `LC09_L2SP_164035_20240805_02_T1` | 2024-08-05 | 0.53% |
 
-روی ۲٬۶۶۶ سلول شبکهٔ ۵۰۰ متری معتبر:
+Across 2,666 valid 500 m grid cells:
 
-| شاخص | مقدار |
+| Metric | Value |
 |---|---|
-| میانگین LST مناطق کم‌پوشش (NDVI<0.15) | ۵۰.۳۴ °C |
-| میانگین LST مناطق سبز (NDVI>0.35) | ۴۵.۴۲ °C |
-| شدت جزیرهٔ حرارتی (UHI) | **۴.۹۲ °C** |
-| همبستگی پیرسون NDVI–LST | r = −0.295 (p < 10⁻⁵⁰) |
-| همبستگی پیرسون NDBI–LST | r = 0.552 (p < 10⁻²⁰۰) |
-| اختلاف میانگین LST بین دو دوره (تک‌روزه) | +۰.۰۵ °C — نامعنادار؛ برای روند بلندمدت به ترکیب چندسالهٔ تصاویر نیاز است |
+| Mean LST, low-vegetation areas (NDVI<0.15) | 50.34 °C |
+| Mean LST, green areas (NDVI>0.35) | 45.42 °C |
+| Urban Heat Island intensity | **4.92 °C** |
+| Pearson correlation, NDVI–LST | r = −0.295 (p < 10⁻⁵⁰) |
+| Pearson correlation, NDBI–LST | r = 0.552 (p < 10⁻²⁰⁰) |
+| Mean LST difference between the two dates (single-day snapshot) | +0.05 °C — not significant; a robust long-term trend needs multi-year compositing |
 
-تحلیل Getis-Ord Gi* روی همین شبکه، ۸۳۰ سلول را با اطمینان ≥۹۰٪ «کانون داغ» و ۱٬۰۱۸ سلول را «کانون سرد» طبقه‌بندی کرد (فایل کامل: `outputs/data/summary.json`).
+A Getis-Ord Gi* analysis on the same grid classified 830 cells as "hot spot" and 1,018 cells as "cold spot" at ≥90% confidence (full detail: `outputs/data/summary.json`).
 
-نسخهٔ تصویری این نتایج (با نمودار و نقشه) در [صفحهٔ معرفی پروژه](docs/portfolio_page.html) قابل مشاهده است.
+A visual version of these results (charts and maps) is available in the [project case-study page](docs/portfolio_page.html).
 
-## نمونه خروجی‌ها (پس از اجرا در `outputs/`)
+## Sample outputs (in `outputs/` after running)
 
-| فایل | توضیح |
+| File | Description |
 |---|---|
-| `figures/lst_histogram.png` | توزیع دمایی و مقایسه دو دوره |
-| `figures/ndvi_lst_scatter.png` | رابطه پوشش گیاهی و دما |
-| `figures/hotspot_map.png` | نقشه کانون‌های داغ/سرد Getis-Ord Gi* |
-| `figures/correlation_heatmap.png` | ماتریس همبستگی شاخص‌ها |
-| `data/summary.csv` | خلاصه عددی نتایج (میانگین دما، شدت UHI، همبستگی) |
-| `data/hotspots.geojson` | لایه فضایی هات‌اسپات برای GIS |
+| `figures/lst_histogram.png` | Temperature distribution, period comparison |
+| `figures/ndvi_lst_scatter.png` | Vegetation vs. temperature relationship |
+| `figures/hotspot_map.png` | Getis-Ord Gi* hot/cold spot map |
+| `figures/correlation_heatmap.png` | Index correlation matrix |
+| `data/summary.json` | Numeric summary of results (mean temperatures, UHI intensity, correlations) |
+| `data/hotspots.geojson` | Hotspot spatial layer for GIS |
 
-## تعمیم به شهرهای دیگر
+## Adapting to other cities
 
-فقط کافیست `bbox` در `config/config.yaml` را به محدوده شهر موردنظر تغییر دهید — کل پایپ‌لاین بدون تغییر کد اجرا می‌شود.
+Just change `bbox` in `config/config.yaml` to the target city's extent — the entire pipeline runs without any code changes.
 
-## مبنای علمی
+## Scientific basis
 
-جزئیات کامل روش‌شناسی، فرمول‌ها و منابع مرجع در [`docs/methodology.md`](docs/methodology.md) آمده است.
+Full methodology, formulas, and references are in [`docs/methodology.md`](docs/methodology.md).
 
-## پشته فناوری
+## Tech stack
 
-`Google Earth Engine` · `Python` · `geemap` · `geopandas` · `esda / libpysal (PySAL)` · `scipy` · `matplotlib / seaborn` · `Landsat 8/9 Collection 2` · `ESA WorldCover`
+`Google Earth Engine` · `Microsoft Planetary Computer / STAC` · `Python` · `geemap` · `rasterio` · `geopandas` · `esda / libpysal (PySAL)` · `scipy` · `matplotlib / seaborn` · `Landsat 8/9 Collection 2` · `ESA WorldCover`
 
-## نویسنده
+## Author
 
-این پروژه به‌عنوان نمونه‌کار (portfolio) در حوزه سنجش از دور و علم داده مکانی توسعه داده شده است.
+**Amirhossein Jafarnezhad**
 
-## مجوز
+## License
 
-MIT — آزاد برای استفاده آموزشی و پژوهشی.
+MIT — free for educational and research use.

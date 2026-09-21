@@ -1,4 +1,4 @@
-"""راه‌اندازی اتصال به Google Earth Engine و بارگذاری پیکربندی پروژه."""
+"""Google Earth Engine connection setup and project configuration loading."""
 import yaml
 import ee
 from pathlib import Path
@@ -12,10 +12,10 @@ def load_config(path: Path = CONFIG_PATH) -> dict:
 
 
 def init_earth_engine(project_id: str | None = None) -> None:
-    """احراز هویت و مقداردهی اولیه Earth Engine.
+    """Authenticate and initialize Earth Engine.
 
-    اولین اجرا مرورگر را برای ورود با حساب گوگل باز می‌کند؛ توکن حاصل
-    به صورت محلی کش می‌شود و اجراهای بعدی نیازی به ورود دوباره ندارند.
+    The first run opens a browser window for Google sign-in; the resulting
+    token is cached locally so subsequent runs don't need to re-authenticate.
     """
     cfg = load_config()
     project_id = project_id or cfg["project"]["ee_project_id"]

@@ -1,12 +1,12 @@
-"""دانلود واقعی صحنه‌های Landsat روی تهران از کاتالوگ عمومی Microsoft Planetary Computer.
+"""Download real Landsat scenes over Tehran from the public Microsoft Planetary Computer catalog.
 
-این اسکریپت جایگزین سریع Earth Engine برای اجرای محلی/بدون احراز هویت گوگل است:
-همان الگوریتم‌های src/lst.py و src/indices.py را روی باندهای واقعی دانلودشده اجرا می‌کند
-تا نتایج این پروژه با تصاویر واقعی ماهواره‌ای (نه داده شبیه‌سازی‌شده) تولید شوند.
+This script is a fast, no-Google-auth-required alternative to Earth Engine for local runs:
+it applies the same algorithms as src/lst.py and src/indices.py to real downloaded bands so
+that this project's results come from real satellite imagery, not simulated data.
 
-صحنه‌های انتخابی (کمترین ابرناکی، تاریخ تقویمی یکسان برای مقایسه منصفانه):
-    baseline : LC08_L2SP_164035_20150805_02_T1  (۵ اوت ۲۰۱۵، ابر ۰.۹٪)
-    recent   : LC09_L2SP_164035_20240805_02_T1  (۵ اوت ۲۰۲۴، ابر ۰.۵٪)
+Selected scenes (lowest cloud cover, same calendar date for a fair comparison):
+    baseline : LC08_L2SP_164035_20150805_02_T1  (August 5, 2015, 0.9% cloud)
+    recent   : LC09_L2SP_164035_20240805_02_T1  (August 5, 2024, 0.5% cloud)
 """
 import json
 from pathlib import Path
@@ -22,7 +22,7 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "outputs" / "data"
 RAW_DIR = DATA_DIR / "raw_bands"
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 
-TEHRAN_BBOX_WGS84 = [51.15, 35.60, 51.50, 35.80]  # زیرمجموعهٔ فشرده‌تر حول شهر برای دانلود سریع‌تر
+TEHRAN_BBOX_WGS84 = [51.15, 35.60, 51.50, 35.80]  # Tighter subset around the city for faster downloads
 
 SCENES = {
     "baseline": {
@@ -69,7 +69,7 @@ def read_band_window(href: str, bbox_wgs84):
 
 def fetch_scene(period_key: str):
     scene = SCENES[period_key]
-    print(f"[{period_key}] در حال دریافت متادیتای صحنه {scene['id']} ...")
+    print(f"[{period_key}] fetching metadata for scene {scene['id']} ...")
     item = get_signed_item(scene["id"])
 
     arrays = {}
@@ -77,7 +77,7 @@ def fetch_scene(period_key: str):
     crs = None
     for local_name, asset_key in BANDS.items():
         href = item.assets[asset_key].href
-        print(f"[{period_key}]   دانلود باند {asset_key} ...")
+        print(f"[{period_key}]   downloading band {asset_key} ...")
         data, transform, crs = read_band_window(href, TEHRAN_BBOX_WGS84)
         arrays[local_name] = data
 
@@ -99,7 +99,7 @@ def fetch_scene(period_key: str):
     with open(RAW_DIR / f"{period_key}_meta.json", "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
 
-    print(f"[{period_key}] ذخیره شد -> {out_path}  (ابر: {meta['cloud_cover_pct']}٪)")
+    print(f"[{period_key}] saved -> {out_path}  (cloud cover: {meta['cloud_cover_pct']}%)")
     return meta
 
 
@@ -107,7 +107,7 @@ def main():
     metas = {}
     for period_key in SCENES:
         metas[period_key] = fetch_scene(period_key)
-    print("\nخلاصه صحنه‌های واقعی دانلودشده:")
+    print("\nSummary of downloaded real scenes:")
     print(json.dumps(metas, ensure_ascii=False, indent=2))
 
 

@@ -1,11 +1,12 @@
-"""تحلیل واقعی جزیره حرارتی تهران روی باندهای واقعی Landsat دانلودشده.
+"""Real analysis of the Tehran urban heat island on real downloaded Landsat bands.
 
-ورودی: outputs/data/raw_bands/{baseline,recent}.npz (تولیدشده توسط fetch_real_scenes.py)
-پیاده‌سازی الگوریتم LST مطابق src/lst.py (روش تک‌کاناله + گسیل‌مندی NDVI) اما با numpy
-به‌جای Earth Engine، چون این اسکریپت روی داده از‌پیش‌دانلودشده و نه سرویس ابری اجرا می‌شود.
+Input: outputs/data/raw_bands/{baseline,recent}.npz (produced by fetch_real_scenes.py)
+Implements the LST algorithm from src/lst.py (mono-window method + NDVI emissivity) using
+numpy instead of Earth Engine, since this script runs on pre-downloaded data rather than
+the cloud service.
 
-خروجی‌ها در outputs/figures و outputs/data ذخیره می‌شوند و منبع واقعی اعداد گزارش‌شده
-در README و صفحه معرفی پروژه هستند.
+Outputs are saved to outputs/figures and outputs/data and are the real source of the numbers
+reported in the README and the project's portfolio page.
 """
 import json
 from pathlib import Path
@@ -82,8 +83,8 @@ def compute_layers(scene: dict) -> dict:
                      np.where(ndvi > 0.5, 0.973, 0.966 * (1 - pv) + 0.973 * pv + 0.005)),
         )
 
-        wavelength = 10.895  # میکرومتر
-        rho = 14388.0  # h*c/k_B بر حسب میکرومتر-کلوین (h*c/sigma_B)
+        wavelength = 10.895
+        rho = 14388.0
         lst_k = thermal_k / (1 + (wavelength * thermal_k / rho) * np.log(emissivity))
         lst_c = lst_k - 273.15
 
@@ -95,7 +96,7 @@ def compute_layers(scene: dict) -> dict:
 
 
 def grid_to_geodataframe(layers: dict, transform, crs: str, cell_px: int = 17) -> gpd.GeoDataFrame:
-    """تجمیع پیکسل‌های ۳۰ متری در سلول‌های ~۵۰۰ متری (17 پیکسل) و ساخت GeoDataFrame."""
+    """Aggregate 30 m pixels into ~500 m cells (17 pixels) and build a GeoDataFrame."""
     lst = layers["lst_c"]
     ndvi = layers["ndvi"]
     ndbi = layers["ndbi"]
@@ -130,21 +131,21 @@ def getis_ord(gdf: gpd.GeoDataFrame, value_col="LST_C") -> gpd.GeoDataFrame:
 
     def classify(z, p):
         if p > 0.10:
-            return "بدون معناداری آماری"
-        conf = "99٪" if p <= 0.01 else ("95٪" if p <= 0.05 else "90٪")
-        kind = "کانون داغ" if z > 0 else "کانون سرد"
-        return f"{kind} - اطمینان {conf}"
+            return "Not significant"
+        conf = "99%" if p <= 0.01 else ("95%" if p <= 0.05 else "90%")
+        kind = "Hot spot" if z > 0 else "Cold spot"
+        return f"{kind} - {conf} confidence"
 
     gdf["hotspot_class"] = [classify(z, p) for z, p in zip(gdf["gi_zscore"], gdf["gi_pvalue"])]
     return gdf
 
 
 def main():
-    print("در حال بارگذاری صحنه‌های واقعی...")
+    print("Loading real scenes...")
     baseline_raw = load_scene("baseline")
     recent_raw = load_scene("recent")
 
-    print("در حال محاسبه NDVI/NDBI/LST از پیکسل‌های واقعی...")
+    print("Computing NDVI/NDBI/LST from real pixels...")
     baseline = compute_layers(baseline_raw)
     recent = compute_layers(recent_raw)
 
@@ -152,23 +153,23 @@ def main():
     from affine import Affine
     affine_t = Affine(*transform)
 
-    print("در حال ساخت شبکه تحلیلی (~500 متر)...")
+    print("Building analysis grid (~500 m)...")
     gdf_recent = grid_to_geodataframe(recent, affine_t, recent_raw["meta"]["crs"])
     gdf_baseline = grid_to_geodataframe(baseline, affine_t, baseline_raw["meta"]["crs"])
 
     gdf_recent = gdf_recent.dropna(subset=["LST_C", "NDVI"])
     gdf_baseline = gdf_baseline.dropna(subset=["LST_C", "NDVI"])
 
-    print(f"سلول‌های معتبر — پایه: {len(gdf_baseline)}, اخیر: {len(gdf_recent)}")
+    print(f"Valid cells — baseline: {len(gdf_baseline)}, recent: {len(gdf_recent)}")
 
-    print("در حال محاسبه همبستگی پیرسون...")
+    print("Computing Pearson correlations...")
     valid_pairs = gdf_recent[["NDVI", "NDBI", "LST_C"]].dropna()
     r_ndvi, p_ndvi = stats.pearsonr(valid_pairs["NDVI"], valid_pairs["LST_C"])
     r_ndbi, p_ndbi = stats.pearsonr(valid_pairs["NDBI"], valid_pairs["LST_C"])
     corr_matrix = valid_pairs.corr(method="pearson")
     corr_matrix.to_csv(DATA_DIR / "correlation_matrix.csv", encoding="utf-8-sig")
 
-    print("در حال اجرای Getis-Ord Gi*...")
+    print("Running Getis-Ord Gi*...")
     gdf_hotspots = getis_ord(gdf_recent, "LST_C")
     gdf_hotspots.to_file(DATA_DIR / "hotspots.geojson", driver="GeoJSON")
     gdf_recent.to_file(DATA_DIR / "grid_recent.geojson", driver="GeoJSON")
@@ -207,18 +208,18 @@ def main():
     with open(DATA_DIR / "summary.json", "w", encoding="utf-8") as f:
         json.dump(summary, f, ensure_ascii=False, indent=2)
 
-    print("\n--- خلاصه نتایج واقعی ---")
+    print("\n--- Real results summary ---")
     for k, v in summary.items():
         print(f"{k}: {v}")
 
-    print("\nدر حال رسم نمودارها از داده واقعی...")
+    print("\nPlotting charts from real data...")
 
     fig, ax = plt.subplots(figsize=(8, 5))
     sns.kdeplot(gdf_baseline["LST_C"], label=f"{baseline_raw['meta']['date']} (Landsat 8)", fill=True, ax=ax)
     sns.kdeplot(gdf_recent["LST_C"], label=f"{recent_raw['meta']['date']} (Landsat 9)", fill=True, ax=ax)
-    ax.set_xlabel("دمای سطح زمین (°C)")
-    ax.set_ylabel("چگالی")
-    ax.set_title("توزیع واقعی دمای سطح زمین تهران — همان روز تقویمی، ۹ سال فاصله")
+    ax.set_xlabel("Land Surface Temperature (°C)")
+    ax.set_ylabel("Density")
+    ax.set_title("Real Tehran LST Distribution — Same Calendar Day, 9 Years Apart")
     ax.legend()
     fig.tight_layout()
     fig.savefig(FIG_DIR / "lst_histogram.png", dpi=200)
@@ -226,26 +227,26 @@ def main():
 
     fig, ax = plt.subplots(figsize=(7, 6))
     sns.regplot(data=valid_pairs, x="NDVI", y="LST_C", scatter_kws={"alpha": 0.35, "s": 10}, line_kws={"color": "red"}, ax=ax)
-    ax.set_title(f"NDVI در برابر LST (داده واقعی) — r = {r_ndvi:.2f}, p < 0.001" if p_ndvi < 0.001 else f"r = {r_ndvi:.2f}")
+    ax.set_title(f"NDVI vs. LST (real data) — r = {r_ndvi:.2f}, p < 0.001" if p_ndvi < 0.001 else f"r = {r_ndvi:.2f}")
     fig.tight_layout()
     fig.savefig(FIG_DIR / "ndvi_lst_scatter.png", dpi=200)
     plt.close(fig)
 
     fig, ax = plt.subplots(figsize=(5, 4))
     sns.heatmap(corr_matrix, annot=True, cmap="coolwarm", vmin=-1, vmax=1, ax=ax)
-    ax.set_title("ماتریس همبستگی واقعی شاخص‌ها")
+    ax.set_title("Real Index Correlation Matrix")
     fig.tight_layout()
     fig.savefig(FIG_DIR / "correlation_heatmap.png", dpi=200)
     plt.close(fig)
 
     hotspot_colors = {
-        "کانون داغ - اطمینان 99٪": "#7f0000",
-        "کانون داغ - اطمینان 95٪": "#d7301f",
-        "کانون داغ - اطمینان 90٪": "#fc8d59",
-        "بدون معناداری آماری": "#e0e0e0",
-        "کانون سرد - اطمینان 90٪": "#91bfdb",
-        "کانون سرد - اطمینان 95٪": "#4575b4",
-        "کانون سرد - اطمینان 99٪": "#313695",
+        "Hot spot - 99% confidence": "#7f0000",
+        "Hot spot - 95% confidence": "#d7301f",
+        "Hot spot - 90% confidence": "#fc8d59",
+        "Not significant": "#e0e0e0",
+        "Cold spot - 90% confidence": "#91bfdb",
+        "Cold spot - 95% confidence": "#4575b4",
+        "Cold spot - 99% confidence": "#313695",
     }
     fig, ax = plt.subplots(figsize=(8, 8))
     for cls, color in hotspot_colors.items():
@@ -253,7 +254,7 @@ def main():
         if len(subset):
             subset.plot(ax=ax, color=color, edgecolor="white", linewidth=0.15, label=cls)
     ax.legend(loc="upper left", bbox_to_anchor=(1.0, 1.0), fontsize=9)
-    ax.set_title("کانون‌های داغ/سرد واقعی تهران — Getis-Ord Gi* (۵ اوت ۲۰۲۴)")
+    ax.set_title("Real Tehran Hot/Cold Clusters — Getis-Ord Gi* (Aug 5, 2024)")
     ax.set_axis_off()
     fig.tight_layout()
     fig.savefig(FIG_DIR / "hotspot_map.png", dpi=200)
@@ -262,13 +263,13 @@ def main():
     fig, axes = plt.subplots(1, 2, figsize=(13, 6))
     for ax, layer, title in zip(axes, [baseline, recent], [baseline_raw["meta"]["date"], recent_raw["meta"]["date"]]):
         im = ax.imshow(layer["lst_c"], cmap="inferno", vmin=20, vmax=55)
-        ax.set_title(f"LST واقعی — {title}")
+        ax.set_title(f"Real LST — {title}")
         ax.set_axis_off()
     fig.colorbar(im, ax=axes, shrink=0.7, label="°C")
     fig.savefig(FIG_DIR / "lst_raster_comparison.png", dpi=200, bbox_inches="tight")
     plt.close(fig)
 
-    print(f"\nتمام خروجی‌های واقعی در {FIG_DIR} و {DATA_DIR} ذخیره شدند.")
+    print(f"\nAll real outputs saved to {FIG_DIR} and {DATA_DIR}.")
 
 
 if __name__ == "__main__":

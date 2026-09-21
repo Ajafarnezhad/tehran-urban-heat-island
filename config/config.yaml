@@ -1,12 +1,12 @@
-# پیکربندی پروژه تحلیل جزیره حرارتی شهری (UHI) تهران
+# Configuration for the Tehran Urban Heat Island (UHI) analysis project
 
 project:
   name: "Tehran Urban Heat Island Analysis"
-  ee_project_id: "your-gcp-project-id"   # آی‌دی پروژه Google Cloud متصل به Earth Engine خودتان را اینجا بگذارید
+  ee_project_id: "your-gcp-project-id"   # Put your own Google Cloud project ID (linked to Earth Engine) here
 
 aoi:
   name: "Tehran"
-  # باکس محدودکننده تقریبی کلان‌شهر تهران (می‌توانید با شیپ‌فایل مرزهای شهرداری جایگزین کنید)
+  # Approximate bounding box of the Tehran metropolitan area (replace with a municipal boundary shapefile if available)
   bbox: [51.05, 35.55, 51.60, 35.85]   # [minLon, minLat, maxLon, maxLat]
 
 time_periods:
@@ -20,8 +20,8 @@ time_periods:
     end: "2024-09-15"
 
 landsat:
-  baseline_collection: "LANDSAT/LC08/C02/T1_L2"   # Landsat 8 برای دوره پایه
-  recent_collection: "LANDSAT/LC09/C02/T1_L2"     # Landsat 9 برای دوره اخیر
+  baseline_collection: "LANDSAT/LC08/C02/T1_L2"   # Landsat 8 for the baseline period
+  recent_collection: "LANDSAT/LC09/C02/T1_L2"     # Landsat 9 for the recent period
   cloud_cover_max: 20
 
 lulc:
@@ -29,11 +29,11 @@ lulc:
   year: "2021"
 
 analysis:
-  grid_cell_size_m: 500          # اندازه سلول شبکه برای آمار ناحیه‌ای و هات‌اسپات
+  grid_cell_size_m: 500          # Grid cell size for zonal statistics and hotspot analysis
   hotspot_confidence_levels: [90, 95, 99]
   ndvi_ndbi_sample_points: 2000
 
 export:
   drive_folder: "UHI_Tehran_Exports"
   scale_m: 30
-  crs: "EPSG:32639"   # UTM Zone 39N (پوشش‌دهنده تهران)
+  crs: "EPSG:32639"   # UTM Zone 39N (covers Tehran)

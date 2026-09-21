@@ -1,14 +1,15 @@
-"""استخراج دمای سطح زمین (LST) با روش تابش‌سنجی تک‌کاناله (Mono-Window) بر پایه NDVI Emissivity."""
+"""Land Surface Temperature (LST) retrieval using the mono-window method with NDVI-based emissivity."""
 import ee
 
 
 def add_emissivity(image: ee.Image) -> ee.Image:
-    """برآورد گسیل‌مندی سطح (LSE) از روی NDVI با روش آستانه NDVI (NDVI Threshold Method).
+    """Estimate land surface emissivity (LSE) from NDVI using the NDVI Threshold Method.
 
-    - آب (NDVI < 0): گسیل‌مندی ثابت 0.991
-    - خاک لخت (NDVI < 0.2): گسیل‌مندی ثابت 0.966
-    - پوشش گیاهی کامل (NDVI > 0.5): گسیل‌مندی ثابت 0.973
-    - پیکسل مخلوط: با استفاده از سهم پوشش گیاهی (Pv) و ضریب اثر هندسی سطح (0.005)
+    - Water (NDVI < 0): constant emissivity 0.991
+    - Bare soil (NDVI < 0.2): constant emissivity 0.966
+    - Full vegetation cover (NDVI > 0.5): constant emissivity 0.973
+    - Mixed pixel: interpolated from vegetation fraction (Pv) plus a surface-roughness
+      correction term (0.005)
     """
     ndvi = image.select("NDVI")
     pv = ndvi.subtract(0.2).divide(0.3).pow(2).clamp(0, 1).rename("PV")
@@ -27,15 +28,16 @@ def add_emissivity(image: ee.Image) -> ee.Image:
 
 
 def add_lst_celsius(image: ee.Image) -> ee.Image:
-    """محاسبه LST بر حسب سلسیوس از دمای درخشندگی باند حرارتی (ST_B10، از پیش کالیبره‌شده به کلوین)
-    با تصحیح گسیل‌مندی طبق معادلهٔ پلانک ساده‌شده (Artis & Carnahan, 1982؛ روش پرکاربرد USGS L2 LST).
+    """Compute LST in Celsius from the thermal band's brightness temperature (ST_B10, already
+    calibrated to Kelvin) with an emissivity correction using the simplified Planck equation
+    (Artis & Carnahan, 1982; a common approach for USGS L2 LST products).
     """
     image = add_emissivity(image)
     lst_kelvin = image.select("ST_B10")
     emissivity = image.select("EM")
 
-    wavelength = 10.895  # میکرومتر، میانگین باند حرارتی TIRS
-    rho = 14388.0  # h*c/k_B بر حسب میکرومتر-کلوین (h*c/sigma_B)
+    wavelength = 10.895  # micrometers, mean effective wavelength of the TIRS thermal band
+    rho = 14388.0  # h*c/k_B in micrometer-Kelvin
 
     lst_corrected = lst_kelvin.expression(
         "LST / (1 + (WL * LST / RHO) * log(EM))",
@@ -52,7 +54,7 @@ def add_lst_celsius(image: ee.Image) -> ee.Image:
 
 
 def build_lst_composite(collection) -> "ee.Image":
-    """میانگین‌گیری زمانی از یک کالکشن پیش‌پردازش‌شده برای تولید ترکیب LST/NDVI/NDBI فصلی."""
+    """Temporally average a preprocessed collection to produce a seasonal LST/NDVI/NDBI composite."""
     with_lst = collection.map(add_lst_celsius)
     composite = with_lst.select(["LST_C", "NDVI", "NDBI", "NDWI"]).mean()
     return composite

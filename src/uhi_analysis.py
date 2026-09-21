@@ -1,4 +1,4 @@
-"""تحلیل آماری و فضایی جزیره حرارتی: نمونه‌برداری شبکه‌ای، همبستگی و هات‌اسپات Getis-Ord Gi*."""
+"""Statistical and spatial analysis of the heat island: grid sampling, correlation, and Getis-Ord Gi* hotspots."""
 import ee
 import numpy as np
 import pandas as pd
@@ -13,7 +13,7 @@ def sample_grid_to_dataframe(
     cell_size_m: int = 500,
     scale: int = 30,
 ) -> pd.DataFrame:
-    """تولید شبکه منظم روی AOI و استخراج میانگین LST/NDVI/NDBI/NDWI در هر سلول."""
+    """Build a regular grid over the AOI and extract the mean LST/NDVI/NDBI/NDWI per cell."""
     grid = composite.select("LST_C").reduceRegions(
         collection=ee.FeatureCollection([ee.Feature(aoi)]).geometry().coveringGrid(
             ee.Projection("EPSG:32639"), cell_size_m
@@ -48,15 +48,15 @@ def to_geodataframe(df: pd.DataFrame, crs: str = "EPSG:4326") -> gpd.GeoDataFram
 
 
 def correlation_report(gdf: gpd.GeoDataFrame) -> pd.DataFrame:
-    """ماتریس همبستگی پیرسون بین LST و شاخص‌های طیفی، برای گزارش کمّی رابطه سبزینگی-حرارت."""
+    """Pearson correlation matrix between LST and spectral indices, quantifying the greening-vs-heat relationship."""
     cols = [c for c in ["LST_C", "NDVI", "NDBI", "NDWI"] if c in gdf.columns]
     return gdf[cols].corr(method="pearson")
 
 
 def getis_ord_hotspots(gdf: gpd.GeoDataFrame, value_col: str = "LST_C") -> gpd.GeoDataFrame:
-    """شناسایی خوشه‌های داغ (Hot Spot) و سرد (Cold Spot) آماری با آماره Getis-Ord Gi*.
+    """Identify statistically significant hot spot / cold spot clusters using the Getis-Ord Gi* statistic.
 
-    خروجی شامل ستون z_score و طبقه‌بندی اطمینان (90/95/99٪) برای نقشه‌سازی است.
+    The output includes a z-score column and a confidence classification (90/95/99%) for mapping.
     """
     gdf = gdf.reset_index(drop=True)
     w = Queen.from_dataframe(gdf, use_index=False)
@@ -70,26 +70,26 @@ def getis_ord_hotspots(gdf: gpd.GeoDataFrame, value_col: str = "LST_C") -> gpd.G
 
     def classify(z, p):
         if p > 0.10:
-            return "بدون معناداری آماری"
+            return "Not significant"
         if z > 0:
             if p <= 0.01:
-                return "کانون داغ - اطمینان 99٪"
+                return "Hot spot - 99% confidence"
             if p <= 0.05:
-                return "کانون داغ - اطمینان 95٪"
-            return "کانون داغ - اطمینان 90٪"
+                return "Hot spot - 95% confidence"
+            return "Hot spot - 90% confidence"
         else:
             if p <= 0.01:
-                return "کانون سرد - اطمینان 99٪"
+                return "Cold spot - 99% confidence"
             if p <= 0.05:
-                return "کانون سرد - اطمینان 95٪"
-            return "کانون سرد - اطمینان 90٪"
+                return "Cold spot - 95% confidence"
+            return "Cold spot - 90% confidence"
 
     gdf["hotspot_class"] = [classify(z, p) for z, p in zip(gdf["gi_zscore"], gdf["gi_pvalue"])]
     return gdf
 
 
 def uhi_intensity(gdf: gpd.GeoDataFrame, worldcover_col: str = "worldcover") -> dict:
-    """محاسبه شدت جزیره حرارتی: اختلاف میانگین LST مناطق ساخته‌شده و مناطق سبز/طبیعی مرجع."""
+    """Compute UHI intensity: the difference in mean LST between built-up areas and a green/natural reference."""
     urban_mean = gdf.loc[gdf[worldcover_col] == 50, "LST_C"].mean()
     rural_mean = gdf.loc[gdf[worldcover_col].isin([10, 20, 30, 40]), "LST_C"].mean()
     return {

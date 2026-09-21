@@ -18,12 +18,12 @@
   "pearson_r_ndbi_lst": 0.552,
   "pearson_p_ndbi_lst": 2.620866470443986e-212,
   "hotspot_counts": {
-    "بدون معناداری آماری": 818,
-    "کانون سرد - اطمینان 99٪": 581,
-    "کانون داغ - اطمینان 99٪": 503,
-    "کانون سرد - اطمینان 95٪": 322,
-    "کانون داغ - اطمینان 95٪": 222,
-    "کانون سرد - اطمینان 90٪": 115,
-    "کانون داغ - اطمینان 90٪": 105
+    "Not significant": 818,
+    "Cold spot - 99% confidence": 581,
+    "Hot spot - 99% confidence": 503,
+    "Cold spot - 95% confidence": 322,
+    "Hot spot - 95% confidence": 222,
+    "Cold spot - 90% confidence": 115,
+    "Hot spot - 90% confidence": 105
   }
 }

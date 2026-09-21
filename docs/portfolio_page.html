@@ -65,7 +65,6 @@
     font-family: var(--font-body);
     font-size: 16px;
     line-height: 1.6;
-    direction: rtl;
   }
   ::selection { background: var(--heat); color: #fff; }
 
@@ -287,7 +286,7 @@
   }
   .table-scroll { overflow-x: auto; }
   th, td {
-    text-align: right;
+    text-align: left;
     padding: 11px 14px;
     border-bottom: 1px solid var(--line-soft);
   }
@@ -408,8 +407,8 @@
   }
   .limits {
     margin-top: 18px;
-    padding-right: 18px;
-    border-right: 2px solid var(--line);
+    padding-left: 18px;
+    border-left: 2px solid var(--line);
     color: var(--text-dim);
     font-size: 0.92rem;
   }
@@ -423,154 +422,155 @@
   }
 </style>
 
-<div class="wrap" dir="rtl" lang="fa">
+<div class="wrap">
   <section class="hero">
     <div class="hero-grid">
       <div>
         <div class="eyebrow">Remote Sensing · Case Study</div>
-        <h1>ردپای حرارتی <em>تهران</em><br>از مدار زمین</h1>
+        <h1>Tehran's <em>thermal</em><br>signature, from orbit</h1>
         <p class="hero-sub">
-          استخراج دمای سطح زمین از دو تصویر واقعی Landsat 8 و 9 — دقیقاً به فاصلهٔ ۹ سال، هر دو در ۵ اوت —
-          و سنجش رابطهٔ آن با پوشش گیاهی، ساخت‌وساز و کانون‌های داغ جزیرهٔ حرارتی با آمارهٔ فضایی Getis-Ord Gi*.
+          Retrieving land surface temperature from real Landsat 8/9 imagery, measuring its relationship
+          with vegetation and built-up density, and mapping urban heat island hot spots with Getis-Ord Gi* spatial analysis.
         </p>
         <div class="hero-meta">
-          <span><b>صحنه‌ها:</b> LC08_164035_20150805 · LC09_164035_20240805</span>
-          <span><b>ابرناکی:</b> 0.93٪ و 0.53٪</span>
-          <span><b>منبع:</b> USGS Landsat C2 L2 (بدون داده شبیه‌سازی)</span>
+          <span><b>Scenes:</b> LC08_164035_20150805 · LC09_164035_20240805</span>
+          <span><b>Cloud cover:</b> 0.93% and 0.53%</span>
+          <span><b>Source:</b> USGS Landsat C2 L2 (no simulated data)</span>
         </div>
       </div>
       <div class="scanner">
-        <img src="figures/hero_lst.png" alt="نقشه واقعی دمای سطح زمین تهران، ۵ اوت ۲۰۲۴" />
+        <img src="figures/hero_lst.png" alt="Real land surface temperature map of Tehran, August 5, 2024" />
         <div class="scanline"></div>
-        <span class="scanner-tag tr">LST واقعی · °C</span>
+        <span class="scanner-tag tr">Real LST · °C</span>
         <span class="scanner-tag">35.70N 51.32E — 2024-08-05</span>
       </div>
     </div>
   </section>
 
   <section class="block">
-    <div class="kicker">۰۱ — روش‌شناسی</div>
-    <h2>از فوتون تا نقشهٔ حرارتی</h2>
+    <div class="kicker">01 — Methodology</div>
+    <h2>From photon to thermal map</h2>
     <p class="lede">
-      پایپ‌لاین در پنج مرحله، تصویر خام ماهواره را به لایه‌های تحلیلی و آمار فضایی تبدیل می‌کند —
-      هر مرحله در ماژول جداگانه‌ای از کد پروژه پیاده‌سازی شده است.
+      The pipeline turns a raw satellite image into analytical layers and spatial statistics in five stages —
+      each implemented as its own module in the project's source code.
     </p>
 
     <div class="pipeline">
       <div class="stage">
-        <div class="n">۱</div>
-        <h3>ماسک ابر</h3>
-        <p>فیلتر ابرناکی &lt;۲۰٪ و ماسک CFMask از باند QA_PIXEL</p>
+        <div class="n">1</div>
+        <h3>Cloud masking</h3>
+        <p>Filter scenes above 20% cloud cover and mask CFMask bits from the QA_PIXEL band</p>
       </div>
       <div class="stage">
-        <div class="n">۲</div>
-        <h3>شاخص‌های طیفی</h3>
-        <p>محاسبه NDVI، NDBI و NDWI از بازتاب سطحی کالیبره‌شده</p>
+        <div class="n">2</div>
+        <h3>Spectral indices</h3>
+        <p>Compute NDVI, NDBI and NDWI from calibrated surface reflectance</p>
       </div>
       <div class="stage">
-        <div class="n">۳</div>
-        <h3>گسیل‌مندی</h3>
-        <p>برآورد LSE با روش آستانهٔ NDVI برای سه پوشش اصلی</p>
+        <div class="n">3</div>
+        <h3>Emissivity</h3>
+        <p>Estimate LSE using the NDVI threshold method across three land cover classes</p>
       </div>
       <div class="stage">
-        <div class="n">۴</div>
-        <h3>استخراج LST</h3>
-        <p>تصحیح دمای درخشندگی با معادلهٔ پلانک ساده‌شده</p>
+        <div class="n">4</div>
+        <h3>LST retrieval</h3>
+        <p>Correct brightness temperature using the simplified Planck equation</p>
       </div>
       <div class="stage">
-        <div class="n">۵</div>
-        <h3>تحلیل فضایی</h3>
-        <p>همبستگی، شبکه‌بندی ۵۰۰ متری و Getis-Ord Gi*</p>
+        <div class="n">5</div>
+        <h3>Spatial analysis</h3>
+        <p>Correlation, 500 m grid sampling, and Getis-Ord Gi*</p>
       </div>
     </div>
 
     <div class="formula-row">
       <div class="card">
-        <div class="tag">گسیل‌مندی سطح</div>
+        <div class="tag">Surface emissivity</div>
         <span class="formula">Pv = ((NDVI − 0.2) / 0.3)²
 ε = 0.966(1−Pv) + 0.973·Pv + 0.005</span>
-        <p>تخصیص گسیل‌مندی بر اساس سهم پوشش گیاهی هر پیکسل، به‌جای مقدار ثابت — دقت LST را در مناطق مخلوط شهری بهبود می‌دهد.</p>
+        <p>Emissivity is assigned by each pixel's vegetation fraction rather than a fixed constant — improving LST accuracy in mixed urban pixels.</p>
       </div>
       <div class="card">
-        <div class="tag">تصحیح تک‌کاناله</div>
+        <div class="tag">Mono-window correction</div>
         <span class="formula">LST = T_B / (1 + (λ·T_B/ρ)·ln ε)</span>
-        <p>λ = 10.895µm (باند حرارتی TIRS)، ρ = 14388 µm·K (=h·c/k_B) — روش Artis & Carnahan (1982).</p>
+        <p>λ = 10.895µm (TIRS thermal band), ρ = 14388 µm·K (= h·c/k_B) — the Artis & Carnahan (1982) method.</p>
       </div>
     </div>
   </section>
 
   <section class="block">
-    <div class="kicker">۰۲ — منابع داده</div>
-    <h2>ورودی‌های ماهواره‌ای</h2>
-    <p class="lede">همه داده‌ها رایگان و باز هستند؛ کل تحلیل بدون هیچ داده میدانی یا خرید تصویر انجام می‌شود.</p>
+    <div class="kicker">02 — Data sources</div>
+    <h2>Satellite inputs</h2>
+    <p class="lede">All data is free and open; the entire analysis requires no field data or purchased imagery.</p>
     <div class="table-scroll">
       <table>
         <thead>
-          <tr><th>منبع</th><th>نقش در تحلیل</th><th>تفکیک مکانی</th><th>پوشش زمانی</th></tr>
+          <tr><th>Source</th><th>Role in the analysis</th><th>Spatial resolution</th><th>Temporal coverage</th></tr>
         </thead>
         <tbody>
-          <tr><td>Landsat 8 C2 L2</td><td>LST / NDVI / NDBI دورهٔ پایه</td><td class="num">30 m</td><td class="num">تابستان ۲۰۱۵</td></tr>
-          <tr><td>Landsat 9 C2 L2</td><td>LST / NDVI / NDBI دورهٔ اخیر</td><td class="num">30 m</td><td class="num">تابستان ۲۰۲۴</td></tr>
-          <tr><td>ESA WorldCover v200</td><td>طبقه‌بندی کاربری اراضی</td><td class="num">10 m</td><td class="num">۲۰۲۱</td></tr>
+          <tr><td>Landsat 8 C2 L2</td><td>LST / NDVI / NDBI, baseline period</td><td class="num">30 m</td><td class="num">Summer 2015</td></tr>
+          <tr><td>Landsat 9 C2 L2</td><td>LST / NDVI / NDBI, recent period</td><td class="num">30 m</td><td class="num">Summer 2024</td></tr>
+          <tr><td>ESA WorldCover v200</td><td>Land use classification</td><td class="num">10 m</td><td class="num">2021</td></tr>
         </tbody>
       </table>
     </div>
   </section>
 
   <section class="block">
-    <div class="kicker">۰۳ — خروجی تحلیل</div>
-    <h2>الگوی حرارتی و کانون‌های داغ</h2>
-    <span class="demo-flag">تمام اعداد و نمودارهای این بخش خروجی مستقیم اجرای کد روی همان دو تصویر واقعی Landsat‌اند — بدون هیچ دادهٔ شبیه‌سازی‌شده</span>
+    <div class="kicker">03 — Analysis output</div>
+    <h2>Thermal pattern and hot spots</h2>
+    <span class="demo-flag">Every number and chart in this section is a direct output of the code running on these two real Landsat scenes — no simulated data</span>
 
     <div class="stat-row">
       <div class="stat">
         <div class="v" id="statUrban">—</div>
-        <div class="l">میانگین LST مناطق کم‌پوشش (NDVI&lt;0.15)</div>
+        <div class="l">Mean LST, low-vegetation cells (NDVI&lt;0.15)</div>
       </div>
       <div class="stat cool">
         <div class="v" id="statRural">—</div>
-        <div class="l">میانگین LST مناطق سبز (NDVI&gt;0.35)</div>
+        <div class="l">Mean LST, green cells (NDVI&gt;0.35)</div>
       </div>
       <div class="stat">
         <div class="v" id="statUHI">—</div>
-        <div class="l">شدت جزیرهٔ حرارتی (UHI)</div>
+        <div class="l">Urban Heat Island intensity</div>
       </div>
     </div>
 
     <div class="results-grid">
       <figure>
-        <img src="figures/ndvi_lst_scatter.png" alt="پراکنش NDVI در برابر LST روی ۲۶۶۶ سلول شبکه واقعی" style="width:100%;border-radius:6px;border:1px solid var(--line);">
-        <figcaption>NDVI در برابر LST روی 2,666 سلول — r = −0.30 (p &lt; 0.001)</figcaption>
+        <img src="figures/ndvi_lst_scatter.png" alt="NDVI vs. LST scatter across 2,666 real grid cells" style="width:100%;border-radius:6px;border:1px solid var(--line);">
+        <figcaption>NDVI vs. LST across 2,666 grid cells — r = −0.30 (p &lt; 0.001)</figcaption>
       </figure>
       <figure>
-        <img src="figures/hotspot_map.png" alt="نقشه کانون‌های داغ و سرد Getis-Ord Gi* واقعی تهران" style="width:100%;border-radius:6px;border:1px solid var(--line);">
-        <figcaption>کانون‌های داغ/سرد Getis-Ord Gi* — ۵ اوت ۲۰۲۴</figcaption>
+        <img src="figures/hotspot_map.png" alt="Real Getis-Ord Gi* hot and cold spot map of Tehran" style="width:100%;border-radius:6px;border:1px solid var(--line);">
+        <figcaption>Getis-Ord Gi* hot/cold spots — August 5, 2024</figcaption>
       </figure>
     </div>
 
     <div class="results-grid" style="margin-top:20px;">
       <figure>
-        <img src="figures/lst_histogram.png" alt="توزیع دمای سطح زمین ۲۰۱۵ در برابر ۲۰۲۴" style="width:100%;border-radius:6px;border:1px solid var(--line);">
-        <figcaption>توزیع LST — همان روز تقویمی، ۹ سال فاصله (Δ میانگین = +۰.۰۵ درجه، تفاوت معنادار نیست)</figcaption>
+        <img src="figures/lst_histogram.png" alt="Land surface temperature distribution, 2015 vs. 2024" style="width:100%;border-radius:6px;border:1px solid var(--line);">
+        <figcaption>LST distribution — same calendar day, nine years apart (Δ mean = +0.05°C, not significant)</figcaption>
       </figure>
       <figure>
-        <img src="figures/lst_raster_comparison.png" alt="نقشه رستری LST برای دو تاریخ" style="width:100%;border-radius:6px;border:1px solid var(--line);">
-        <figcaption>نقشهٔ رستری LST، ۳۰ متر — کوهستان شمال (سرد) در برابر بافت شهری (داغ)</figcaption>
+        <img src="figures/lst_raster_comparison.png" alt="Raster LST map for both dates" style="width:100%;border-radius:6px;border:1px solid var(--line);">
+        <figcaption>Raster LST map, 30 m — cool northern mountains vs. hot urban fabric</figcaption>
       </figure>
     </div>
 
     <p class="lede" style="margin-top:26px;">
-      مقایسهٔ تک‌روزهٔ دو تاریخ برای برآورد <b>روند بلندمدت گرمایش</b> کافی نیست — نوسان جوی روزانه اثر آن را می‌پوشاند
-      (تفاوت میانگین اینجا فقط ۰.۰۵ درجه است). آنچه این دو صحنه با اطمینان بالا نشان می‌دهند، رابطهٔ ساختاری
-      <b>مکانی</b> بین پوشش گیاهی/ساخت‌وساز و دماست: همبستگی NDBI با LST برابر <b>r = 0.55</b> (p &lt; 10⁻²⁰⁰)
-      در برابر <b>r = −0.30</b> برای NDVI — یعنی تراکم ساخت‌وساز پیش‌بینی‌کنندهٔ قوی‌تری از دمای سطح نسبت به کمبود
-      پوشش گیاهی است.
+      A single-day comparison between the two dates isn't enough to estimate a <b>long-term warming trend</b> —
+      daily atmospheric noise dominates it (the mean difference here is only 0.05°C). What these two scenes
+      do show with high confidence is the <b>spatial structural</b> relationship between vegetation/built-up
+      density and temperature: the NDBI–LST correlation is <b>r = 0.55</b> (p &lt; 10⁻²⁰⁰), stronger than the
+      <b>r = −0.30</b> for NDVI — meaning built-up density is a stronger predictor of surface temperature than
+      vegetation deficit.
     </p>
   </section>
 
   <section class="block">
-    <div class="kicker">۰۴ — پیاده‌سازی</div>
-    <h2>پشتهٔ فنی و ساختار مخزن</h2>
+    <div class="kicker">04 — Implementation</div>
+    <h2>Tech stack and repository layout</h2>
     <div class="stack-list">
       <span class="pill">Google Earth Engine</span>
       <span class="pill">Microsoft Planetary Computer / STAC</span>
@@ -583,39 +583,40 @@
       <span class="pill">Jupyter</span>
     </div>
     <p class="lede" style="margin-top:18px;">
-      دو مسیر اجرا وجود دارد: پایپ‌لاین اصلی روی Google Earth Engine (هر AOI و بازهٔ دلخواه، نیازمند حساب GCP)،
-      و مسیر دوم که <b>بدون هیچ حساب کاربری</b> مستقیماً همین دو صحنهٔ واقعی را از کاتالوگ عمومی
-      Microsoft Planetary Computer می‌گیرد و نتایج بالا را بازتولید می‌کند.
+      There are two execution paths: the main pipeline on Google Earth Engine (any AOI, any date range,
+      requires a GCP account), and a second path that fetches these exact real scenes directly from the
+      public Microsoft Planetary Computer catalog and reproduces the results above — <b>with no account
+      required at all</b>.
     </p>
     <div class="repo-tree">heat/
-├── config/config.yaml           <span class="cm"># AOI، بازه‌های زمانی، پارامترها</span>
+├── config/config.yaml           <span class="cm"># AOI, time periods, parameters</span>
 ├── <span class="dir">src/</span>
-│   ├── gee_setup.py              <span class="cm"># اتصال Earth Engine</span>
-│   ├── indices.py                 <span class="cm"># ماسک ابر، NDVI، NDBI، NDWI</span>
-│   ├── lst.py                     <span class="cm"># استخراج LST + گسیل‌مندی</span>
-│   ├── lulc.py                    <span class="cm"># پوشش اراضی ESA WorldCover</span>
-│   ├── uhi_analysis.py            <span class="cm"># همبستگی + Getis-Ord Gi*</span>
-│   └── visualization.py           <span class="cm"># نقشه‌ها و نمودارها</span>
+│   ├── gee_setup.py              <span class="cm"># Earth Engine connection</span>
+│   ├── indices.py                 <span class="cm"># Cloud masking, NDVI, NDBI, NDWI</span>
+│   ├── lst.py                     <span class="cm"># LST retrieval + emissivity</span>
+│   ├── lulc.py                    <span class="cm"># ESA WorldCover land cover</span>
+│   ├── uhi_analysis.py            <span class="cm"># Correlation + Getis-Ord Gi*</span>
+│   └── visualization.py           <span class="cm"># Maps and charts</span>
 ├── <span class="dir">scripts/</span>
-│   ├── run_pipeline.py           <span class="cm"># مسیر ۱: کامل روی Earth Engine</span>
-│   ├── fetch_real_scenes.py      <span class="cm"># مسیر ۲: دانلود صحنهٔ واقعی (بدون لاگین)</span>
-│   └── analyze_real_scenes.py    <span class="cm"># مسیر ۲: تحلیل همان دادهٔ واقعی</span>
+│   ├── run_pipeline.py           <span class="cm"># Path 1: full run on Earth Engine</span>
+│   ├── fetch_real_scenes.py      <span class="cm"># Path 2: download real scene (no login)</span>
+│   └── analyze_real_scenes.py    <span class="cm"># Path 2: analyze that real data</span>
 ├── <span class="dir">notebooks/</span>01_UHI_Tehran_Analysis.ipynb
-└── <span class="dir">docs/</span>methodology.md           <span class="cm"># روش‌شناسی کامل + منابع</span></div>
+└── <span class="dir">docs/</span>methodology.md           <span class="cm"># Full methodology + references</span></div>
   </section>
 
   <section class="block" style="border-bottom:none;">
-    <div class="kicker">۰۵ — محدودیت‌ها</div>
-    <h2>صداقت علمی</h2>
+    <div class="kicker">05 — Limitations</div>
+    <h2>Scientific honesty</h2>
     <ul class="limits">
-      <li>روش تک‌کاناله نسبت به Split-Window چندکاناله دقت اندکی کمتری دارد.</li>
-      <li>تفاوت زمان عبور ماهواره بین دو دوره بخشی از اختلاف دمایی مشاهده‌شده را توضیح می‌دهد.</li>
-      <li>تفکیک مکانی ۳۰ متری برای تحلیل درون‌محله‌ای دقیق، داده حرارتی با تفکیک بالاتر (مثل ECOSTRESS) را می‌طلبد.</li>
+      <li>The mono-window method is somewhat less accurate than multi-channel split-window methods.</li>
+      <li>Differences in satellite overpass timing between the two periods explain part of the observed temperature gap.</li>
+      <li>30 m spatial resolution isn't sufficient for precise intra-neighborhood analysis; higher-resolution thermal data (like ECOSTRESS) would help.</li>
     </ul>
   </section>
 
   <footer>
-    <div class="sig">Tehran UHI Analysis — Remote Sensing Portfolio Project</div>
+    <div class="sig">Tehran UHI Analysis — Remote Sensing Portfolio Project by Amirhossein Jafarnezhad</div>
     <div class="sig">MIT License</div>
   </footer>
 </div>

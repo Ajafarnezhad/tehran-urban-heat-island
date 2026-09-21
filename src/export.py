@@ -1,4 +1,4 @@
-"""صادرات لایه‌های نهایی به Google Drive برای بایگانی و استفاده در GIS دسکتاپ."""
+"""Export final layers to Google Drive for archiving and use in desktop GIS."""
 import ee
 
 

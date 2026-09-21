@@ -1,6 +1,6 @@
-"""نقطه ورود CLI: اجرای کامل پایپ‌لاین تحلیل UHI تهران از ابتدا تا انتها.
+"""CLI entry point: run the full Tehran UHI analysis pipeline end to end.
 
-اجرا:
+Usage:
     python scripts/run_pipeline.py
 """
 import sys
@@ -49,37 +49,37 @@ def main():
     init_earth_engine(cfg["project"]["ee_project_id"])
     aoi = get_aoi(cfg)
 
-    print("در حال ساخت ترکیب دمایی دوره پایه (2015)...")
+    print("Building baseline (2015) temperature composite...")
     lst_baseline = build_period_composite(cfg, aoi, "baseline", cfg["landsat"]["baseline_collection"])
 
-    print("در حال ساخت ترکیب دمایی دوره اخیر (2024)...")
+    print("Building recent (2024) temperature composite...")
     lst_recent = build_period_composite(cfg, aoi, "recent", cfg["landsat"]["recent_collection"])
 
-    print("در حال بارگذاری نقشه پوشش اراضی...")
+    print("Loading land cover map...")
     worldcover = load_worldcover(aoi, cfg["lulc"]["collection"], cfg["lulc"]["year"])
 
     cell_size = cfg["analysis"]["grid_cell_size_m"]
 
-    print("در حال نمونه‌برداری شبکه‌ای برای دوره پایه...")
+    print("Sampling grid for the baseline period...")
     df_baseline = sample_grid_to_dataframe(lst_baseline, aoi, cell_size)
     gdf_baseline = to_geodataframe(df_baseline)
 
-    print("در حال نمونه‌برداری شبکه‌ای برای دوره اخیر...")
+    print("Sampling grid for the recent period...")
     df_recent = sample_grid_to_dataframe(lst_recent, aoi, cell_size)
     gdf_recent = to_geodataframe(df_recent)
 
     gdf_recent.to_file(OUT_DIR / "data" / "grid_recent.geojson", driver="GeoJSON")
     gdf_baseline.to_file(OUT_DIR / "data" / "grid_baseline.geojson", driver="GeoJSON")
 
-    print("در حال محاسبه ماتریس همبستگی...")
+    print("Computing correlation matrix...")
     corr = correlation_report(gdf_recent)
     corr.to_csv(OUT_DIR / "data" / "correlation_matrix.csv", encoding="utf-8-sig")
 
-    print("در حال اجرای تحلیل هات‌اسپات Getis-Ord Gi*...")
+    print("Running Getis-Ord Gi* hotspot analysis...")
     gdf_hotspots = getis_ord_hotspots(gdf_recent, value_col="LST_C")
     gdf_hotspots.to_file(OUT_DIR / "data" / "hotspots.geojson", driver="GeoJSON")
 
-    print("در حال رسم نمودارها...")
+    print("Plotting charts...")
     plot_lst_histogram(gdf_baseline, gdf_recent, str(OUT_DIR / "figures" / "lst_histogram.png"))
     plot_ndvi_lst_scatter(gdf_recent, str(OUT_DIR / "figures" / "ndvi_lst_scatter.png"))
     plot_hotspot_map(gdf_hotspots, str(OUT_DIR / "figures" / "hotspot_map.png"))
@@ -93,11 +93,11 @@ def main():
     }
     pd.Series(summary).to_csv(OUT_DIR / "data" / "summary.csv", encoding="utf-8-sig")
 
-    print("\n--- خلاصه نتایج ---")
+    print("\n--- Summary ---")
     for k, v in summary.items():
         print(f"{k}: {v}")
 
-    print(f"\nتمام خروجی‌ها در {OUT_DIR} ذخیره شدند.")
+    print(f"\nAll outputs saved to {OUT_DIR}.")
 
 
 if __name__ == "__main__":
