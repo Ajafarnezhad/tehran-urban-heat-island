@@ -1,0 +1,29 @@
+{
+  "baseline_scene": "LC08_L2SP_164035_20150805_02_T1",
+  "baseline_date": "2015-08-05",
+  "baseline_cloud_pct": 0.93,
+  "recent_scene": "LC09_L2SP_164035_20240805_02_T1",
+  "recent_date": "2024-08-05",
+  "recent_cloud_pct": 0.53,
+  "n_cells_baseline": 2666,
+  "n_cells_recent": 2666,
+  "mean_lst_baseline_c": 49.57,
+  "mean_lst_recent_c": 49.62,
+  "warming_delta_c": 0.05,
+  "urban_mean_lst_c": 50.34,
+  "green_mean_lst_c": 45.42,
+  "uhi_intensity_c": 4.92,
+  "pearson_r_ndvi_lst": -0.295,
+  "pearson_p_ndvi_lst": 7.463839466756195e-55,
+  "pearson_r_ndbi_lst": 0.552,
+  "pearson_p_ndbi_lst": 2.620866470443986e-212,
+  "hotspot_counts": {
+    "بدون معناداری آماری": 818,
+    "کانون سرد - اطمینان 99٪": 581,
+    "کانون داغ - اطمینان 99٪": 503,
+    "کانون سرد - اطمینان 95٪": 322,
+    "کانون داغ - اطمینان 95٪": 222,
+    "کانون سرد - اطمینان 90٪": 115,
+    "کانون داغ - اطمینان 90٪": 105
+  }
+}
