@@ -1,0 +1,11 @@
+{
+  "scene_id": "LC09_L2SP_164035_20240805_02_T1",
+  "date": "2024-08-05",
+  "cloud_cover_pct": 0.53,
+  "platform": "landsat-9",
+  "shape": [
+    743,
+    1058
+  ],
+  "crs": "EPSG:32639"
+}
