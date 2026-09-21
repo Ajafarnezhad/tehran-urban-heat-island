@@ -1,0 +1,641 @@
+<title>Tehran Thermal Signature</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Libre+Franklin:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #14100c;
+    --bg-raised: #1d1712;
+    --bg-panel: #241c15;
+    --line: #3a2f24;
+    --line-soft: #2a2119;
+    --text: #f3ece0;
+    --text-dim: #b8a892;
+    --text-faint: #83725d;
+    --heat: #e15c2e;
+    --heat-dim: #8a3d22;
+    --cool: #4f84a8;
+    --cool-dim: #33566d;
+    --amber: #d9a441;
+    --good: #6f9e6a;
+    --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+    --font-body: "Libre Franklin", "Segoe UI", Arial, sans-serif;
+    --font-mono: "JetBrains Mono", "Consolas", monospace;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f7f1e6;
+      --bg-raised: #fffaf0;
+      --bg-panel: #fdf6e9;
+      --line: #ddccae;
+      --line-soft: #e8dcbf;
+      --text: #241c15;
+      --text-dim: #5c4f3b;
+      --text-faint: #8c7d61;
+      --heat: #c94a1f;
+      --heat-dim: #e3b39c;
+      --cool: #2f6082;
+      --cool-dim: #b9d3e2;
+      --amber: #a97417;
+      --good: #4a7a45;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f1e6;
+    --bg-raised: #fffaf0;
+    --bg-panel: #fdf6e9;
+    --line: #ddccae;
+    --line-soft: #e8dcbf;
+    --text: #241c15;
+    --text-dim: #5c4f3b;
+    --text-faint: #8c7d61;
+    --heat: #c94a1f;
+    --heat-dim: #e3b39c;
+    --cool: #2f6082;
+    --cool-dim: #b9d3e2;
+    --amber: #a97417;
+    --good: #4a7a45;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    direction: rtl;
+  }
+  ::selection { background: var(--heat); color: #fff; }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+  a { color: var(--heat); }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    position: relative;
+    padding: 88px 0 56px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--heat);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 7px; height: 7px;
+    background: var(--heat);
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--heat) 25%, transparent);
+  }
+  .hero h1 {
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--heat);
+  }
+  .hero-sub {
+    margin-top: 20px;
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    max-width: 46ch;
+  }
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    margin-top: 28px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text-faint);
+  }
+  .hero-meta b { color: var(--text-dim); font-weight: 500; }
+
+  .scanner {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--bg-raised);
+    overflow: hidden;
+  }
+  .scanner img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .scanner .scanline {
+    position: absolute; left: 0; right: 0; height: 34px;
+    top: -34px;
+    background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--text) 18%, transparent), transparent);
+    animation: sweep 5s linear infinite;
+  }
+  @keyframes sweep {
+    0% { top: -34px; }
+    100% { top: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scanner .scanline { animation: none; display: none; }
+  }
+  .scanner-tag {
+    position: absolute;
+    left: 10px; bottom: 10px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    background: color-mix(in srgb, var(--bg) 55%, transparent);
+    padding: 3px 7px;
+    border-radius: 3px;
+    border: 1px solid var(--line-soft);
+  }
+  .scanner-tag.tr { left: auto; right: 10px; bottom: auto; top: 10px; }
+
+  /* ---------- SECTION SHELL ---------- */
+  section.block {
+    padding: 64px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 10px;
+  }
+  .block h2 {
+    font-size: 1.9rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .lede {
+    color: var(--text-dim);
+    max-width: 62ch;
+    font-size: 1.02rem;
+  }
+
+  /* ---------- PIPELINE ---------- */
+  .pipeline {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    position: relative;
+  }
+  .pipeline::before {
+    content: "";
+    position: absolute;
+    top: 22px; left: 6%; right: 6%;
+    height: 1px;
+    background: repeating-linear-gradient(to right, var(--line) 0 6px, transparent 6px 11px);
+  }
+  .stage {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-right: 14px;
+    position: relative;
+  }
+  .stage .n {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--bg);
+    background: var(--heat);
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    margin-bottom: 14px;
+    z-index: 1;
+  }
+  .stage h3 {
+    font-family: var(--font-body);
+    font-size: 0.94rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .stage p {
+    font-size: 0.82rem;
+    color: var(--text-faint);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ---------- METHOD FORMULA CARD ---------- */
+  .formula-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 36px;
+  }
+  .card {
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px 22px;
+  }
+  .card .tag {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cool);
+    margin-bottom: 10px;
+  }
+  .card code, .formula {
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    color: var(--text);
+    display: block;
+    background: var(--bg-raised);
+    border: 1px solid var(--line-soft);
+    border-radius: 5px;
+    padding: 10px 12px;
+    margin-top: 8px;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .card p { color: var(--text-dim); font-size: 0.88rem; margin: 10px 0 0; }
+
+  /* ---------- DATA TABLE ---------- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+    font-size: 0.92rem;
+  }
+  .table-scroll { overflow-x: auto; }
+  th, td {
+    text-align: right;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  thead th {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    font-weight: 500;
+    border-bottom: 1px solid var(--line);
+  }
+  tbody td:first-child { color: var(--text); font-weight: 600; }
+  td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-dim); }
+
+  /* ---------- RESULTS ---------- */
+  .demo-flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--good);
+    background: color-mix(in srgb, var(--good) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--good) 35%, transparent);
+    padding: 5px 11px;
+    border-radius: 100px;
+    margin-bottom: 22px;
+  }
+  .demo-flag::before { content: "✓"; }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 20px;
+    margin-top: 8px;
+  }
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .stat {
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px 16px;
+  }
+  .stat .v {
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: var(--heat);
+  }
+  .stat.cool .v { color: var(--cool); }
+  .stat .l {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    margin-top: 4px;
+  }
+
+  figure { margin: 0; }
+  figcaption {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  /* ---------- STACK ---------- */
+  .stack-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 26px;
+  }
+  .pill {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 6px 13px;
+    border-radius: 100px;
+    border: 1px solid var(--line);
+    color: var(--text-dim);
+    background: var(--bg-raised);
+  }
+
+  /* ---------- REPO ---------- */
+  .repo-tree {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text-dim);
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px 22px;
+    margin-top: 30px;
+    line-height: 1.85;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .repo-tree .dir { color: var(--cool); }
+  .repo-tree .cm { color: var(--text-faint); }
+
+  footer {
+    padding: 46px 0 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  footer .sig {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+  .limits {
+    margin-top: 18px;
+    padding-right: 18px;
+    border-right: 2px solid var(--line);
+    color: var(--text-dim);
+    font-size: 0.92rem;
+  }
+  .limits li { margin-bottom: 8px; }
+
+  @media (max-width: 760px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .pipeline { grid-template-columns: repeat(2, 1fr); row-gap: 26px; }
+    .pipeline::before { display: none; }
+    .formula-row, .results-grid, .stat-row { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="wrap" dir="rtl" lang="fa">
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">Remote Sensing · Case Study</div>
+        <h1>ردپای حرارتی <em>تهران</em><br>از مدار زمین</h1>
+        <p class="hero-sub">
+          استخراج دمای سطح زمین از دو تصویر واقعی Landsat 8 و 9 — دقیقاً به فاصلهٔ ۹ سال، هر دو در ۵ اوت —
+          و سنجش رابطهٔ آن با پوشش گیاهی، ساخت‌وساز و کانون‌های داغ جزیرهٔ حرارتی با آمارهٔ فضایی Getis-Ord Gi*.
+        </p>
+        <div class="hero-meta">
+          <span><b>صحنه‌ها:</b> LC08_164035_20150805 · LC09_164035_20240805</span>
+          <span><b>ابرناکی:</b> 0.93٪ و 0.53٪</span>
+          <span><b>منبع:</b> USGS Landsat C2 L2 (بدون داده شبیه‌سازی)</span>
+        </div>
+      </div>
+      <div class="scanner">
+        <img src="figures/hero_lst.png" alt="نقشه واقعی دمای سطح زمین تهران، ۵ اوت ۲۰۲۴" />
+        <div class="scanline"></div>
+        <span class="scanner-tag tr">LST واقعی · °C</span>
+        <span class="scanner-tag">35.70N 51.32E — 2024-08-05</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="kicker">۰۱ — روش‌شناسی</div>
+    <h2>از فوتون تا نقشهٔ حرارتی</h2>
+    <p class="lede">
+      پایپ‌لاین در پنج مرحله، تصویر خام ماهواره را به لایه‌های تحلیلی و آمار فضایی تبدیل می‌کند —
+      هر مرحله در ماژول جداگانه‌ای از کد پروژه پیاده‌سازی شده است.
+    </p>
+
+    <div class="pipeline">
+      <div class="stage">
+        <div class="n">۱</div>
+        <h3>ماسک ابر</h3>
+        <p>فیلتر ابرناکی &lt;۲۰٪ و ماسک CFMask از باند QA_PIXEL</p>
+      </div>
+      <div class="stage">
+        <div class="n">۲</div>
+        <h3>شاخص‌های طیفی</h3>
+        <p>محاسبه NDVI، NDBI و NDWI از بازتاب سطحی کالیبره‌شده</p>
+      </div>
+      <div class="stage">
+        <div class="n">۳</div>
+        <h3>گسیل‌مندی</h3>
+        <p>برآورد LSE با روش آستانهٔ NDVI برای سه پوشش اصلی</p>
+      </div>
+      <div class="stage">
+        <div class="n">۴</div>
+        <h3>استخراج LST</h3>
+        <p>تصحیح دمای درخشندگی با معادلهٔ پلانک ساده‌شده</p>
+      </div>
+      <div class="stage">
+        <div class="n">۵</div>
+        <h3>تحلیل فضایی</h3>
+        <p>همبستگی، شبکه‌بندی ۵۰۰ متری و Getis-Ord Gi*</p>
+      </div>
+    </div>
+
+    <div class="formula-row">
+      <div class="card">
+        <div class="tag">گسیل‌مندی سطح</div>
+        <span class="formula">Pv = ((NDVI − 0.2) / 0.3)²
+ε = 0.966(1−Pv) + 0.973·Pv + 0.005</span>
+        <p>تخصیص گسیل‌مندی بر اساس سهم پوشش گیاهی هر پیکسل، به‌جای مقدار ثابت — دقت LST را در مناطق مخلوط شهری بهبود می‌دهد.</p>
+      </div>
+      <div class="card">
+        <div class="tag">تصحیح تک‌کاناله</div>
+        <span class="formula">LST = T_B / (1 + (λ·T_B/ρ)·ln ε)</span>
+        <p>λ = 10.895µm (باند حرارتی TIRS)، ρ = 14388 µm·K (=h·c/k_B) — روش Artis & Carnahan (1982).</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="kicker">۰۲ — منابع داده</div>
+    <h2>ورودی‌های ماهواره‌ای</h2>
+    <p class="lede">همه داده‌ها رایگان و باز هستند؛ کل تحلیل بدون هیچ داده میدانی یا خرید تصویر انجام می‌شود.</p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>منبع</th><th>نقش در تحلیل</th><th>تفکیک مکانی</th><th>پوشش زمانی</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Landsat 8 C2 L2</td><td>LST / NDVI / NDBI دورهٔ پایه</td><td class="num">30 m</td><td class="num">تابستان ۲۰۱۵</td></tr>
+          <tr><td>Landsat 9 C2 L2</td><td>LST / NDVI / NDBI دورهٔ اخیر</td><td class="num">30 m</td><td class="num">تابستان ۲۰۲۴</td></tr>
+          <tr><td>ESA WorldCover v200</td><td>طبقه‌بندی کاربری اراضی</td><td class="num">10 m</td><td class="num">۲۰۲۱</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="kicker">۰۳ — خروجی تحلیل</div>
+    <h2>الگوی حرارتی و کانون‌های داغ</h2>
+    <span class="demo-flag">تمام اعداد و نمودارهای این بخش خروجی مستقیم اجرای کد روی همان دو تصویر واقعی Landsat‌اند — بدون هیچ دادهٔ شبیه‌سازی‌شده</span>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="v" id="statUrban">—</div>
+        <div class="l">میانگین LST مناطق کم‌پوشش (NDVI&lt;0.15)</div>
+      </div>
+      <div class="stat cool">
+        <div class="v" id="statRural">—</div>
+        <div class="l">میانگین LST مناطق سبز (NDVI&gt;0.35)</div>
+      </div>
+      <div class="stat">
+        <div class="v" id="statUHI">—</div>
+        <div class="l">شدت جزیرهٔ حرارتی (UHI)</div>
+      </div>
+    </div>
+
+    <div class="results-grid">
+      <figure>
+        <img src="figures/ndvi_lst_scatter.png" alt="پراکنش NDVI در برابر LST روی ۲۶۶۶ سلول شبکه واقعی" style="width:100%;border-radius:6px;border:1px solid var(--line);">
+        <figcaption>NDVI در برابر LST روی 2,666 سلول — r = −0.30 (p &lt; 0.001)</figcaption>
+      </figure>
+      <figure>
+        <img src="figures/hotspot_map.png" alt="نقشه کانون‌های داغ و سرد Getis-Ord Gi* واقعی تهران" style="width:100%;border-radius:6px;border:1px solid var(--line);">
+        <figcaption>کانون‌های داغ/سرد Getis-Ord Gi* — ۵ اوت ۲۰۲۴</figcaption>
+      </figure>
+    </div>
+
+    <div class="results-grid" style="margin-top:20px;">
+      <figure>
+        <img src="figures/lst_histogram.png" alt="توزیع دمای سطح زمین ۲۰۱۵ در برابر ۲۰۲۴" style="width:100%;border-radius:6px;border:1px solid var(--line);">
+        <figcaption>توزیع LST — همان روز تقویمی، ۹ سال فاصله (Δ میانگین = +۰.۰۵ درجه، تفاوت معنادار نیست)</figcaption>
+      </figure>
+      <figure>
+        <img src="figures/lst_raster_comparison.png" alt="نقشه رستری LST برای دو تاریخ" style="width:100%;border-radius:6px;border:1px solid var(--line);">
+        <figcaption>نقشهٔ رستری LST، ۳۰ متر — کوهستان شمال (سرد) در برابر بافت شهری (داغ)</figcaption>
+      </figure>
+    </div>
+
+    <p class="lede" style="margin-top:26px;">
+      مقایسهٔ تک‌روزهٔ دو تاریخ برای برآورد <b>روند بلندمدت گرمایش</b> کافی نیست — نوسان جوی روزانه اثر آن را می‌پوشاند
+      (تفاوت میانگین اینجا فقط ۰.۰۵ درجه است). آنچه این دو صحنه با اطمینان بالا نشان می‌دهند، رابطهٔ ساختاری
+      <b>مکانی</b> بین پوشش گیاهی/ساخت‌وساز و دماست: همبستگی NDBI با LST برابر <b>r = 0.55</b> (p &lt; 10⁻²⁰⁰)
+      در برابر <b>r = −0.30</b> برای NDVI — یعنی تراکم ساخت‌وساز پیش‌بینی‌کنندهٔ قوی‌تری از دمای سطح نسبت به کمبود
+      پوشش گیاهی است.
+    </p>
+  </section>
+
+  <section class="block">
+    <div class="kicker">۰۴ — پیاده‌سازی</div>
+    <h2>پشتهٔ فنی و ساختار مخزن</h2>
+    <div class="stack-list">
+      <span class="pill">Google Earth Engine</span>
+      <span class="pill">Microsoft Planetary Computer / STAC</span>
+      <span class="pill">Python</span>
+      <span class="pill">rasterio</span>
+      <span class="pill">geopandas</span>
+      <span class="pill">esda / libpysal</span>
+      <span class="pill">scipy</span>
+      <span class="pill">matplotlib · seaborn</span>
+      <span class="pill">Jupyter</span>
+    </div>
+    <p class="lede" style="margin-top:18px;">
+      دو مسیر اجرا وجود دارد: پایپ‌لاین اصلی روی Google Earth Engine (هر AOI و بازهٔ دلخواه، نیازمند حساب GCP)،
+      و مسیر دوم که <b>بدون هیچ حساب کاربری</b> مستقیماً همین دو صحنهٔ واقعی را از کاتالوگ عمومی
+      Microsoft Planetary Computer می‌گیرد و نتایج بالا را بازتولید می‌کند.
+    </p>
+    <div class="repo-tree">heat/
+├── config/config.yaml           <span class="cm"># AOI، بازه‌های زمانی، پارامترها</span>
+├── <span class="dir">src/</span>
+│   ├── gee_setup.py              <span class="cm"># اتصال Earth Engine</span>
+│   ├── indices.py                 <span class="cm"># ماسک ابر، NDVI، NDBI، NDWI</span>
+│   ├── lst.py                     <span class="cm"># استخراج LST + گسیل‌مندی</span>
+│   ├── lulc.py                    <span class="cm"># پوشش اراضی ESA WorldCover</span>
+│   ├── uhi_analysis.py            <span class="cm"># همبستگی + Getis-Ord Gi*</span>
+│   └── visualization.py           <span class="cm"># نقشه‌ها و نمودارها</span>
+├── <span class="dir">scripts/</span>
+│   ├── run_pipeline.py           <span class="cm"># مسیر ۱: کامل روی Earth Engine</span>
+│   ├── fetch_real_scenes.py      <span class="cm"># مسیر ۲: دانلود صحنهٔ واقعی (بدون لاگین)</span>
+│   └── analyze_real_scenes.py    <span class="cm"># مسیر ۲: تحلیل همان دادهٔ واقعی</span>
+├── <span class="dir">notebooks/</span>01_UHI_Tehran_Analysis.ipynb
+└── <span class="dir">docs/</span>methodology.md           <span class="cm"># روش‌شناسی کامل + منابع</span></div>
+  </section>
+
+  <section class="block" style="border-bottom:none;">
+    <div class="kicker">۰۵ — محدودیت‌ها</div>
+    <h2>صداقت علمی</h2>
+    <ul class="limits">
+      <li>روش تک‌کاناله نسبت به Split-Window چندکاناله دقت اندکی کمتری دارد.</li>
+      <li>تفاوت زمان عبور ماهواره بین دو دوره بخشی از اختلاف دمایی مشاهده‌شده را توضیح می‌دهد.</li>
+      <li>تفکیک مکانی ۳۰ متری برای تحلیل درون‌محله‌ای دقیق، داده حرارتی با تفکیک بالاتر (مثل ECOSTRESS) را می‌طلبد.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <div class="sig">Tehran UHI Analysis — Remote Sensing Portfolio Project</div>
+    <div class="sig">MIT License</div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  function animateNumber(el, target, decimals, suffix, duration) {
+    var start = performance.now();
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) { el.textContent = target.toFixed(decimals) + suffix; return; }
+    function step(ts) {
+      var p = Math.min(1, (ts - start) / duration);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = (target * eased).toFixed(decimals) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  animateNumber(document.getElementById('statUrban'), 50.34, 1, '°C', 900);
+  animateNumber(document.getElementById('statRural'), 45.42, 1, '°C', 900);
+  animateNumber(document.getElementById('statUHI'), 4.92, 1, '°C', 1100);
+})();
+</script>
